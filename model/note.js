@@ -23,4 +23,8 @@ const Note = sequelize.define('note', {
 
 Note.sync()
 
+Note.findAll().then(users => {
+  console.log(users)
+})
+
 module.exports = Note;

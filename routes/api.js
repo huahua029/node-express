@@ -43,10 +43,9 @@ router.post('/note/edit', function (req, res, next) {
     })
 })
 
-
-
-router.delete('/note/delete', function (req, res, next) {
-  // res.send('delete')
+router.post('/note/delete', function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+  res.setHeader('Access-Control-Allow-Credentials', true)
   Note.destroy({where: {id: req.body.id}})
     .then(() => {
         res.send({status: 0})
