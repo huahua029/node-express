@@ -8,12 +8,17 @@ router.get('/notes', function (req, res, next) {
     let data = {}
     data.status = 0
     data.notes = notes
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+    res.setHeader('Access-Control-Allow-Credentials', true)
     res.send(data)
   })
 })
 router.post('/note/create', function (req, res, next) {
-  let note = req.body.note
-  Note.create({text: note}).then(
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  let text = req.body.text
+  let value = req.body.value
+  Note.create({text, value}).then(
     () => {
       res.send({status: 0})
     }
@@ -21,13 +26,24 @@ router.post('/note/create', function (req, res, next) {
     res.send({status: 1, errorMsg: '数据库出错'})
   })
 })
-router.put('/note/edit', function (req, res, next) {
-  Note.update({text: req.body.note}, {where: {id: req.body.id}})
+router.post('/note/finish', function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  Note.update({finish: true}, {where: {id: req.body.id}})
     .then(() => {
-      // console.log(arguments)
       res.send({status: 0})
     })
 })
+router.post('/note/edit', function (req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  Note.update({text: req.body.text}, {where: {id: req.body.id}})
+    .then(() => {
+      res.send({status: 0})
+    })
+})
+
+
 
 router.delete('/note/delete', function (req, res, next) {
   // res.send('delete')
