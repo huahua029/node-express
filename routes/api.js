@@ -7,7 +7,6 @@ let conn = mongoose.connect('mongodb://localhost:27017/test')
 
 router.get('/notes', function (req, res, next) {
   Note.find().then(notes => {
-    console.log(notes);
     let data = {}
     data.status = 0
     data.notes = notes
@@ -43,8 +42,6 @@ router.post('/note/finish', function (req, res, next) {
 router.post('/note/edit', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.setHeader('Access-Control-Allow-Credentials', true)
-  // console.log(req.body.id);
-  console.log(req.body);
   Note.updateOne({"_id": req.body.id},{text: req.body.text})
     .then(() => {
       res.send({status: 0})
