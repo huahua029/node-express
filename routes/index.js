@@ -36,10 +36,14 @@ router.post('/login', function (req, res, next) {
   let username = req.body.username
   let password = req.body.password
   let uid = Math.random() * 1000000
-  User.find().where({username: username},{password: password}).then(
-    (x) => {
-      console.log(x);
-      res.send({status: 0})
+  User.find({username: username,password:password}).then(
+    (data) => {
+      if (data.length) {
+        console.log(typeof data)
+        res.send({status: 0})
+      } else {
+        res.send({status: 1, errorMsg: '未注册'})
+      }
     }
   ).catch(() => {
     res.send({status: 1, errorMsg: '数据库出错'})
