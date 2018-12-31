@@ -1,10 +1,13 @@
 var express = require('express');
+let mongoose = require('mongoose')
 var router = express.Router();
-var Note = require('../model/note.js')
+let Note = require('../model/model.js')
 
+let conn = mongoose.connect('mongodb://localhost:27017/test')
 
 router.get('/notes', function (req, res, next) {
-  Note.findAll({raw: true}).then(notes => {
+  Note.find().then(notes => {
+    console.log(notes);
     let data = {}
     data.status = 0
     data.notes = notes
@@ -13,12 +16,14 @@ router.get('/notes', function (req, res, next) {
     res.send(data)
   })
 })
+
 router.post('/note/create', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.setHeader('Access-Control-Allow-Credentials', true)
   let text = req.body.text
   let value = req.body.value
-  Note.create({text, value}).then(
+  let uid = 5
+  Note.create({text,value,uid}).then(
     () => {
       res.send({status: 0})
     }
@@ -26,10 +31,11 @@ router.post('/note/create', function (req, res, next) {
     res.send({status: 1, errorMsg: '数据库出错'})
   })
 })
+
 router.post('/note/finish', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.setHeader('Access-Control-Allow-Credentials', true)
-  Note.update({finish: true}, {where: {id: req.body.id}})
+  Note.updateOne({'_id': req.body.id},{finish: true})
     .then(() => {
       res.send({status: 0})
     })
@@ -37,7 +43,9 @@ router.post('/note/finish', function (req, res, next) {
 router.post('/note/edit', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.setHeader('Access-Control-Allow-Credentials', true)
-  Note.update({text: req.body.text}, {where: {id: req.body.id}})
+  // console.log(req.body.id);
+  console.log(req.body);
+  Note.updateOne({"_id": req.body.id},{text: req.body.text})
     .then(() => {
       res.send({status: 0})
     })
@@ -46,7 +54,7 @@ router.post('/note/edit', function (req, res, next) {
 router.post('/note/delete', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.setHeader('Access-Control-Allow-Credentials', true)
-  Note.destroy({where: {id: req.body.id}})
+  Note.findOneAndDelete({'_id': req.body.id})
     .then(() => {
         res.send({status: 0})
       }
