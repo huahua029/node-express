@@ -15,18 +15,20 @@ router.get('/', function (req, res, next) {
 router.post('/register', function (req, res, next) {
   let username = req.body.username
   let password = req.body.password
-  let uid = Math.random() * 1000000
-  res.setHeader('Set-Cookie', `uid=${uid}`)
+  let uid = parseInt(Math.random() * 1000000)
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
   res.setHeader('Access-Control-Allow-Credentials', true)
-  User.create({username, password, uid}).then(
-    () => {
-      res.send({status: 0})
+  res.cookie('uid', uid)
+  User.find({"username": username}).then(
+    (data) => {
+      console.log(data);
+      if (data.length) {
+        res.send({status: 1, errorMsg: '已注册'})
+      } else {
+        res.send({status: 0})
+        User.create({username, password, uid})
+      }
     }
-  ).then(
-    User.find().then(
-      x=>console.log(x)
-    )
   )
 })
 
@@ -35,11 +37,10 @@ router.post('/login', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Credentials', true)
   let username = req.body.username
   let password = req.body.password
-  let uid = Math.random() * 1000000
-  User.find({username: username,password:password}).then(
+  User.find({username: username, password: password}).then(
     (data) => {
+      console.log(data);
       if (data.length) {
-        console.log(typeof data)
         res.send({status: 0})
       } else {
         res.send({status: 1, errorMsg: '未注册'})
@@ -48,6 +49,14 @@ router.post('/login', function (req, res, next) {
   ).catch(() => {
     res.send({status: 1, errorMsg: '数据库出错'})
   })
+})
+
+router.get('/logout', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  let uid = req.cookies.uid
+  res.cookie('uid', uid, {expires: new Date(Date.now())})
+  res.send('logout')
 })
 
 module.exports = router;

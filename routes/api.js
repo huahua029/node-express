@@ -6,7 +6,10 @@ let Note = require('../model/model.js')
 let conn = mongoose.connect('mongodb://localhost:27017/test')
 
 router.get('/notes', function (req, res, next) {
-  Note.find().then(notes => {
+  // console.log(req.headers.cookie);
+  // console.log(req.cookies.uid);
+  Note.find({uid: req.cookies.uid}).then(notes => {
+    console.log(notes)
     let data = {}
     data.status = 0
     data.notes = notes
@@ -21,7 +24,7 @@ router.post('/note/create', function (req, res, next) {
   res.setHeader('Access-Control-Allow-Credentials', true)
   let text = req.body.text
   let value = req.body.value
-  let uid = 5
+  let uid = req.cookies.uid
   Note.create({text,value,uid}).then(
     () => {
       res.send({status: 0})
