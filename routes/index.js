@@ -39,9 +39,8 @@ router.post('/login', function (req, res, next) {
   let password = req.body.password
   User.find({username: username, password: password}).then(
     (data) => {
-      console.log(data);
       if (data.length) {
-        res.send({status: 0})
+        res.send({status: 0,notes: data})
       } else {
         res.send({status: 1, errorMsg: '未注册'})
       }

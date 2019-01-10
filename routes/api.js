@@ -6,10 +6,7 @@ let Note = require('../model/model.js')
 let conn = mongoose.connect('mongodb://localhost:27017/test')
 
 router.get('/notes', function (req, res, next) {
-  // console.log(req.headers.cookie);
-  // console.log(req.cookies.uid);
-  Note.find({uid: req.cookies.uid}).then(notes => {
-    console.log(notes)
+  Note.find({"username": req.body.username}).then(notes => {
     let data = {}
     data.status = 0
     data.notes = notes
