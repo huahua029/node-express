@@ -8,16 +8,11 @@ let conn = mongoose.connect('mongodb://localhost:27017/test')
 router.get('/', function (req, res, next) {
   res.send('首页')
 })
-// router.get('/login', function(req, res, next) {
-//   res.send('login')
-// })
 
 router.post('/register', function (req, res, next) {
   let username = req.body.username
   let password = req.body.password
   let uid = parseInt(Math.random() * 1000000)
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   res.cookie('uid', uid)
   User.find({"username": username}).then(
     (data) => {
@@ -33,8 +28,6 @@ router.post('/register', function (req, res, next) {
 })
 
 router.post('/login', function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   let username = req.body.username
   let password = req.body.password
   User.find({username: username, password: password}).then(
@@ -51,8 +44,6 @@ router.post('/login', function (req, res, next) {
 })
 
 router.get('/logout', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   let uid = req.cookies.uid
   res.cookie('uid', uid, {expires: new Date(Date.now())})
   res.send('logout')

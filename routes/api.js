@@ -10,15 +10,11 @@ router.get('/notes', function (req, res, next) {
     let data = {}
     data.status = 0
     data.notes = notes
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-    res.setHeader('Access-Control-Allow-Credentials', true)
     res.send(data)
   })
 })
 
 router.post('/note/create', function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   let text = req.body.text
   let value = req.body.value
   let uid = req.cookies.uid
@@ -32,16 +28,12 @@ router.post('/note/create', function (req, res, next) {
 })
 
 router.post('/note/finish', function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   Note.updateOne({'_id': req.body.id},{finish: true})
     .then(() => {
       res.send({status: 0})
     })
 })
 router.post('/note/edit', function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   Note.updateOne({"_id": req.body.id},{text: req.body.text})
     .then(() => {
       res.send({status: 0})
@@ -49,8 +41,6 @@ router.post('/note/edit', function (req, res, next) {
 })
 
 router.post('/note/delete', function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8080')
-  res.setHeader('Access-Control-Allow-Credentials', true)
   Note.findOneAndDelete({'_id': req.body.id})
     .then(() => {
         res.send({status: 0})
