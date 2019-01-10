@@ -6,10 +6,8 @@ let NoteSchema = new Schema({
   text: String,
   value: Number,
   finish: {type: Boolean, default: false},
-  uid: Number
 })
 
-// mongoose.model('User',UserSchema)
 let Note = mongoose.model('Note', NoteSchema)
 
 module.exports = Note

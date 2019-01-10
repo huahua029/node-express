@@ -1,52 +1,49 @@
 var express = require('express');
 let mongoose = require('mongoose')
 var router = express.Router();
-let User = require('../model/User.js')
+let Note = require('../model/model.js')
 
 let conn = mongoose.connect('mongodb://localhost:27017/test')
 
-router.get('/', function (req, res, next) {
-  res.send('首页')
+router.get('/notes', function (req, res, next) {
+  Note.find().then(notes => {
+    let data = {}
+    data.status = 0
+    data.notes = notes
+    res.send(data)
+  })
 })
 
-router.post('/register', function (req, res, next) {
-  let username = req.body.username
-  let password = req.body.password
-  let uid = parseInt(Math.random() * 1000000)
-  res.cookie('uid', uid)
-  User.find({"username": username}).then(
-    (data) => {
-      console.log(data);
-      if (data.length) {
-        res.send({status: 1, errorMsg: '已注册'})
-      } else {
-        res.send({status: 0})
-        User.create({username, password, uid})
-      }
-    }
-  )
-})
-
-router.post('/login', function (req, res, next) {
-  let username = req.body.username
-  let password = req.body.password
-  User.find({username: username, password: password}).then(
-    (data) => {
-      if (data.length) {
-        res.send({status: 0,notes: data})
-      } else {
-        res.send({status: 1, errorMsg: '未注册'})
-      }
+router.post('/note/create', function (req, res, next) {
+  let text = req.body.text
+  let value = req.body.value
+  Note.create({text,value}).then(
+    () => {
+      res.send({status: 0})
     }
   ).catch(() => {
     res.send({status: 1, errorMsg: '数据库出错'})
   })
 })
 
-router.get('/logout', (req, res) => {
-  let uid = req.cookies.uid
-  res.cookie('uid', uid, {expires: new Date(Date.now())})
-  res.send('logout')
+router.post('/note/finish', function (req, res, next) {
+  Note.updateOne({'_id': req.body.id},{finish: true})
+    .then(() => {
+      res.send({status: 0})
+    })
+})
+router.post('/note/edit', function (req, res, next) {
+  Note.updateOne({"_id": req.body.id},{text: req.body.text})
+    .then(() => {
+      res.send({status: 0})
+    })
 })
 
+router.post('/note/delete', function (req, res, next) {
+  Note.findOneAndDelete({'_id': req.body.id})
+    .then(() => {
+        res.send({status: 0})
+      }
+    )
+})
 module.exports = router;
