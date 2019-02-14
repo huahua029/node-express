@@ -8,7 +8,8 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 
-app.use(cors({credentials: true, origin: 'http://localhost:8080'}));
+app.use(cors());
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

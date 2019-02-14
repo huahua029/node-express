@@ -3,7 +3,7 @@ let mongoose = require('mongoose')
 var router = express.Router();
 let Note = require('../model/model.js')
 
-let conn = mongoose.connect('mongodb://localhost:27017/test')
+let conn = mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser:true})
 
 router.get('/notes', function (req, res, next) {
   Note.find().then(notes => {
